@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="views_dual_inventario" model="ir.ui.view">
+			<field name="name">view.dual.inventario</field>
+    		<field name="model">stock.valuation.layer</field>
+    		<field name="inherit_id" ref="stock_account.stock_valuation_layer_form"></field>	
+    		<field name="arch" type="xml">
+				<xpath expr="//notebook//page//group//field[@name='unit_cost'][last()]"  position="after">				
+					<field name="x_dual_inv_costo_dolares" string="Bs."/>
+					<field name="x_dual_inv_tasa_dolar" string="Tasa de Cambio BCV:" style="text-align: right; font-weight: bold;"/>
+				</xpath>
+				<xpath expr="//notebook//page//group//field[@name='value'][last()]"  position="after">				
+					<field name="x_dual_inv_value_dolares" string="Bs."/>
+					<field name="x_dual_inv_tasa_dolar" string="Tasa de Cambio BCV:" style="text-align: right; font-weight: bold;"/>
+				</xpath>				
+			</field>
+		</record>
+	</data>
+</odoo>

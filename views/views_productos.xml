@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_product_form" model="ir.ui.view">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='list_price']" position="after">
+                    <attribute name="string">|        Bs:</attribute>
+                    <field name="x_dual_precio_bolivares" string="Bs|"></field><attribute name="string">|        Tasa:</attribute>
+                    <field name="x_dual_tasa_cambio_valor" string="Tasa Bs|"></field>
+                    <attribute name="string">|        Fecha:</attribute>
+                    <field name="x_dual_fecha_tasa" string="Fecha|"></field>
+                </xpath>
+                <xpath expr="//field[@name='standard_price']" position="after">
+                    <attribute name="string">|        Bs:</attribute>
+                    <field name="x_dual_coste_bolivares" string="Bs|"></field><attribute name="string">|        Tasa:</attribute>
+                    <field name="x_dual_tasa_cambio_valor" string="Tasa Bs|"></field>
+                    <attribute name="string">|        Fecha:</attribute>
+                    <field name="x_dual_fecha_tasa" string="Fecha|"></field>
+                </xpath>
+                <xpath expr="//notebook" position="inside">
+                    <page string="Utilidad Financiera">
+                        <xpath expr="//notebook//page" position="inside">
+                            <group>                               
+                                <group>
+                                    <field name="standard_price" string="Costo:" options="{'onchange': 'onStandardPriceChange'}"/>                         
+                                     
+                                    <field name="x_dual_porcentaje" string="Pocentaje %:"  widget="float" options="{'digits': (3, 2), 'min': 0, 'max': 100}" onchange="onPorcentajeChange"/> 
+
+                                    <field name="x_dual_utilidad30" string="Utilidad Financiera:"/>                                   
+                                    
+                                </group>      
+
+                            </group>
+                        </xpath>
+                    </page>
+                </xpath>  
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="reporte_factura" model="ir.actions.report">
+			<field name="name">Factura Preimpresa</field>
+			<field name="model">account.move</field>
+			<field name="report_type">qweb-pdf</field>
+			<field name="report_name">dual.template_factura</field>
+			<field name="report_file">dual.template_factura</field>
+		</record>		
+     
+	</data>
+</odoo>

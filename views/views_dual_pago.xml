@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="views_dual_pago" model="ir.ui.view">
+			<field name="name">view.dual.pago</field>
+    		<field name="model">account.payment.register</field>
+    		<field name="inherit_id" ref="account.view_account_payment_register_form"></field>    		
+    		<field name="arch" type="xml">
+    			<xpath expr="//field[@name='currency_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='amount']"  position="after">	<attribute name="string">|        Bs:</attribute>
+					<field name="x_dual_pago_dolares" string="Bs." style="color: green; text-align: left; font-weight: bold;"/>					
+					<attribute name="string">|        Tasa:</attribute>
+					<field name="x_dual_tasa_cambio_valor" string="Tasa Bs|"></field>
+                    <attribute name="string">|        Fecha:</attribute>
+                    <field name="x_dual_fecha_tasa" string="Fecha|"></field>           	
+                 </xpath>
+                 <xpath expr="//field[@name='payment_difference']"  position="after">	<attribute name="string">|        Bs:</attribute>
+					<field name="x_dual_pago_diferencia" string="Bs." style="color: green; text-align: left; font-weight: bold;"/>					
+					<attribute name="string">|        Tasa:</attribute>
+					<field name="x_dual_tasa_cambio_valor" string="Tasa Bs|"></field>
+                    <attribute name="string">|        Fecha:</attribute>
+                    <field name="x_dual_fecha_tasa" string="Fecha|"></field>           	
+                 </xpath>
+			</field>
+		</record>
+	</data>
+</odoo>

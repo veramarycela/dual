@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <template id="template_factura">
+            <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+            <!--<t t-call="web.external_layout">-->
+                <style>
+                    @page {
+                                size: half-lette landscape; /* Cambia 'letter' por 'half-letter' para media carta */
+                                text-align: justify;                                  
+                    }
+                    .table 
+                    {
+                        font-size: 18px; /* Tamaño de letra más pequeño */
+                        line-height: 1; /* Interlineado más pequeño */
+                        padding-right: 50px;
+                        
+                    }
+                    .table td {
+                        text-align: right; /* Alinea el texto a la derecha dentro de las celdas */
+                    }
+                    .espacio-columnas td {
+                        padding-right: 80px; /* Ajusta según tus necesidades */
+                        font-size: 18px;
+                    }
+                    .paragraph-style 
+                    {
+                        line-height: 1.5; /* Establece el interlineado a 1.5 veces el tamaño del texto */
+                        font-size: 14px; /* Tamaño de fuente */
+                        color: #333; /* Color del texto */    
+                                    
+                    }                                   
+                </style>
+                <div class="page" >
+                    <meta charset="utf-8"/>
+                    <h2>Factura Nro <span t-field="o.name"/> Fecha: <span t-field="o.date"/> </h2>                    
+                    <p></p>
+                    <p>CLIENTE</p>
+                     <p class="paragraph-style"><span t-field="o.partner_id.name"/>
+                     Direccion: <span t-field="o.partner_id.city"/>
+                     Telefono: <span t-field="o.partner_id.phone_sanitized"/>
+                     Rif: <span t-field="o.partner_id.vat"/></p>                    
+                     
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio $</th>
+                                <th>Precio Bs</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal $</th>
+                                <th>Subtotal Bs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.invoice_line_ids" t-as="line">
+                                <tr>
+                                    <td><span t-field="line.product_id.name"/></td>
+                                    <td><span t-field="line.price_unit"/></td>
+                                    <td><span t-field="line.x_dual_precio_dolares" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    <td><span t-field="line.quantity"/></td>
+                                    <td><span t-field="line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    <td><span t-field="line.x_dual_subtotal_dolares" t-options='{"widget": "float", "precision": 2}'/></td>
+                                </tr>                                
+                            </t>
+                        </tbody>
+                    </table>
+                     <br></br>                    
+                    <table class="espacio-columnas">
+                        <tr>
+                            <td>                             
+                                
+
+
+                                <t t-set="tax_totals_dict" t-value="json.loads(o.tax_totals_json)"/>
+
+                                <p>
+                                    <p> Base Imponible:                                    <t t-esc="tax_totals_dict.get('amount_untaxed', '')"/>
+                                    </p>
+                                    Impuestos:
+                                    <br></br>
+                                    <t t-if="tax_totals_dict and 'groups_by_subtotal' in tax_totals_dict">
+                                        <t t-foreach="tax_totals_dict['groups_by_subtotal']['Base imponible']" t-as="group">
+                                            <span><t t-esc="group.get('tax_group_name', '')"/>: <t t-esc="group.get('formatted_tax_group_amount', '')"/></span><br/>
+                                        </t>
+                                    
+                                    </t>
+                                </p>
+   
+                                
+                                <p>Total a Pagar $: <span style="font-weight: bold;" t-field="o.amount_total" t-options='{"widget": "float", "precision": 2}'/></p>
+                                
+                                <p>Total a Pagar Bs: <span style="font-weight: bold;" t-field="o.x_dual_total_dolares" t-options='{"widget": "float", "precision": 2}'/></p>
+                            </td> 
+                        </tr>
+                    </table>
+                    <br></br>
+                    <br></br>
+                    <table>
+                        <tr >
+                            <td>
+                                <p>Tasa de Cambio BCV: <span t-field="o.x_dual_tasa_dolar" t-options='{"widget": "float", "precision": 2}'/></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </t>
+            </t>
+        <!--    </t>-->
+        </template>
+    </data>
+</odoo>

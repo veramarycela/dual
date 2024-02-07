@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="views_dua_analisis_ventas" model="ir.ui.view">
+			<field name="name">dual.view.analisis.ventas</field>
+    		<field name="model">dual.informe</field>
+    		<field name="inherit_id" ref="account.account_invoice_report_view_tree"/>
+    		<field name="arch" type="xml">
+        		<xpath expr="//tree//field[@name='price_subtotal']" position="before">            
+            		<field name="x_dual_informe"/>
+            	</xpath>
+            </field>
+		</record>
+	</data>
+</odoo>
