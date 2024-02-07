@@ -126,9 +126,10 @@ class Facturas(models.Model):
 
     x_dual_total_dolares = fields.Float(compute='_dolarizar_total', store=True)
 
-    x_dual_tasa_dolar = fields.Float(compute='_compute_tasa_dolar', store=True, string='Tasa de Cambio USD')
+    x_dual_tasa_dolar = fields.Float(compute='_compute_tasa_dolar', store=True, string='Tasa de Cambio USD', digits=(16,4))
     
-    
+    x_detalle_ids = fields.One2many('account.move.line', 'move_id', string='Detalle de Factura') 
+
     #ESTA FUNCION PERMITE OBETNER LA TASA DE CAMBIO ACTUAL BOLIVARES 
     @api.depends('date', 'currency_id')
     def _compute_tasa_dolar(self):
@@ -170,7 +171,16 @@ class Facturas(models.Model):
             else:
                     # Si no se encuentra una tasa de cambio, dejar x_dual_tasa_dolar como 0.0
                     move.x_dual_total_dolares = 0.0     
-       
+    
+    #ESTA FUNCION ACTUALIZA LA TASA DE ACMBIO AL DIA DEL DETALLE DE FACTURA, TOTAL DE LA FACTURA
+    def update_detalle_factura(self):
+        print("1. Entre a Actualizar Detalle de factura....")
+        for factura in self:
+            for detalle in factura.x_detalle_ids:
+                detalle._dolarizar()
+                detalle._dolarizar_subtotal()
+            factura._compute_tasa_dolar()
+            factura._dolarizar_total()
 
 #ESTA CLASE ME PERMITE REGISTRAR EL SUBTOTAL Y LOS PRECIOS DE DOLARES A BOLIVARES
 #FACTURA
@@ -181,6 +191,9 @@ class DetalleFactura(models.Model):
     x_dual_precio_dolares = fields.Float(compute='_dolarizar', store=True)
     x_dual_subtotal_dolares = fields.Float(compute='_dolarizar_subtotal', store=True)
     x_dual_monto_diario = fields.Float(compute='_dolarizar_diario', store=True)
+    
+    x_factura_id = fields.Many2one('account.move', string='Factura')
+
     #ESTA FUNCION PERMITE PASAR DE DOLARES A BOLIVARES EL PRECIO DEL PRODUCTO EN LA FACTURA
     @api.depends('price_unit', 'currency_id')
     def _dolarizar(self):
@@ -203,28 +216,26 @@ class DetalleFactura(models.Model):
                 # Si no se encuentra un tipo de cambio, dejar x_dual_precio_dolares como 0.0
                 move.x_dual_precio_dolares = 0.0            
     
-    #ESTA FUNCION PERMITE PASAR DE DOLARES A BOLIVARES EL SUBTOTAL A PAGAR EN LA FACTURA    
+    #ESTA FUNCION PERMITE PASAR DE DOLARES A BOLIVARES EL SUBTOTAL A PAGAR EN LA FACTURA        
     @api.depends('price_subtotal', 'currency_id')
     def _dolarizar_subtotal(self):
         # Obtener la moneda predeterminada, por ejemplo, USD (Dólar)
         default_currency = self.env['res.currency'].search([('name', '=', 'VES')], limit=1)
-        print("1.Estoy en la Clase Detalle de Facturas y obtengo el valor en Bs de los $...")  
-        for move_line in self:
-            move = move_line.move_id
-            if move.payment_state == 'not_paid':
-                # Buscar la tasa de cambio para la moneda del producto en res.currency.rate
-                currency_rate = self.env['res.currency.rate'].search([
-                    ('currency_id', '=', default_currency.id),  # Utilizar la moneda predeterminada
-                    # Puedes ajustar esto según tus necesidades
-                ], limit=1)
-                print("2.La Tasa de Cambio actual es.....")
-                print(currency_rate.rate)
-                if currency_rate:
-                    # Calcular el subtotal en dólares usando el tipo de cambio y price_subtotal
-                    move_line.x_dual_subtotal_dolares = move_line.price_subtotal * currency_rate.rate                    
-                else:
-                    # Si no se encuentra un tipo de cambio, dejar x_dual_subtotal_dolares como 0.0
-                    move_line.x_dual_subtotal_dolares = 0.0            
+        print("1.Estoy en la Clase Detalle de Facturas y obtengo el valor en Bs de los $...")       
+        for move in self:
+            # Buscar la tasa de cambio para la moneda del producto en res.currency.rate
+            currency_rate = self.env['res.currency.rate'].search([
+                ('currency_id', '=', default_currency.id),  # Utilizar la moneda predeterminada
+                # Puedes ajustar esto según tus necesidades
+            ], limit=1)
+            print("2.La Tasa de Cambio actual es.....")
+            print(currency_rate.rate)
+            if currency_rate:
+                # Calcular el subtotal en dólares usando el tipo de cambio y price_subtotal
+                move.x_dual_subtotal_dolares = move.price_subtotal * currency_rate.rate                    
+            else:
+                # Si no se encuentra un tipo de cambio, dejar x_dual_subtotal_dolares como 0.0
+                move.x_dual_subtotal_dolares = 0.0             
 
     #ESTA FUNCION SIRVE PARA TRANFORMAR EL VALOR EN DOLARES A BOLIVARES DE LOS ASIENTOS CONTABLES
     @api.depends('amount_currency', 'currency_id')
@@ -246,7 +257,7 @@ class DetalleFactura(models.Model):
             else:
                 # Si no se encuentra un tipo de cambio, dejar x_dual_subtotal_dolares como 0.0
                 move.x_dual_monto_diario = 0.0    
-
+    
 #CLASE QUE PERMITE PASAR DE DOLARES A BOLIVARES EL MONTO DEL PAGO
 #PAGO
 class Pago(models.TransientModel):

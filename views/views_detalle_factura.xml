@@ -16,7 +16,7 @@
 					<field name="x_dual_total_dolares" string="Total en Bolivares:" style="color: green; text-align: left; font-weight: bold;"/>
 				</xpath>
 				<xpath expr="//field[@name='narration']"  position="after">				
-					<field name="x_dual_tasa_dolar" string="Tasa de Cambio BCV, Creacion de la Factura:" style="text-align: right; font-weight: bold;"/>
+					<field name="x_dual_tasa_dolar" string="Tasa de Cambio BCV: $/Bs." style="text-align: right; font-weight: bold;"/>
 				</xpath>				
 				<xpath expr="//field[@name='currency_id'][last()]" position="attributes">
                 	<attribute name="invisible">1</attribute>
@@ -26,6 +26,12 @@
                 </xpath>
                 <xpath expr="//button[@name='preview_invoice']" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='button_draft']" position="after">
+                    <button name="update_detalle_factura" string="Actualizar Factura a la Tasa de Cambio" type="object" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//button[@name='update_detalle_factura']" position="after">                	
+                    <field name="x_dual_tasa_dolar" string="Tasa BCV:" style="text-align: right; font-weight: bold;"/>
                 </xpath>
 			</field>
 		</record>

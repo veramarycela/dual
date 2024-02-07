@@ -24,8 +24,7 @@
              'views/views_dual_asientos_contables.xml',
              'views/views_dual_partner.xml',
              #'views/views_dual_analisis_ventas.xml',
-             'views/views_dual_moneda_venta.xml', 
-                                     
+             'views/views_dual_moneda_venta.xml',                                                  
              #'views/views_dual_moneda_compra.xml',
              'template/template_factura.xml',
              'report/reporte_factura.xml',
